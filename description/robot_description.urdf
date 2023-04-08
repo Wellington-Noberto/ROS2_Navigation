@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<robot name="diff_nav_bot" xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <xacro:include filename="robot_core.urdf"/>
+    <xacro:include filename="gazebo_control.urdf"/>
+    <xacro:include filename="gazebo_plugins.urdf"/>    
+    
+</robot>
