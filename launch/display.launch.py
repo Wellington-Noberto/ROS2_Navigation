@@ -4,7 +4,8 @@ from ament_index_python import get_package_share_directory
 from launch import LaunchDescription
 from launch_ros.actions import Node
 from launch.substitutions import Command, LaunchConfiguration
-from launch.actions import DeclareLaunchArgument, ExecuteProcess
+from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 
 def generate_launch_description():
@@ -43,13 +44,11 @@ def generate_launch_description():
                                 cmd=['gazebo', '--verbose', '-s', 'libgazebo_ros_init.so', '-s', 'libgazebo_ros_factory.so', world_default_path], 
                                 output='screen')
 
+    
     ## Nodes
-    robot_state_publisher_node = Node(
-        package='robot_state_publisher',
-        executable='robot_state_publisher',
-        name='robot_state_publisher_node',
-        output='screen',
-        parameters=[{'use_sim_time': use_sim_time, 'robot_description': robot_desc}]
+    robot_state_publisher_node = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([os.path.join(
+            pkg_share, 'launch','robot_state_pub.launch.py')])
     )
 
     joint_state_publisher_node = Node(
@@ -82,6 +81,18 @@ def generate_launch_description():
         output='screen'
     )
 
+    diff_drive_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["diff_cont"],
+    )
+
+    joint_broad_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["joint_broad"],
+    )
+
     slam_toolbox_node = Node(
         package='slam_toolbox',
         executable='async_slam_toolbox_node',
@@ -94,11 +105,12 @@ def generate_launch_description():
         model_desc_arg,
         use_sim_time_arg,
         rviz_arg,
-        #joint_state_publisher_node,
         robot_state_publisher_node,
         rviz_node,
-        spawn_entity,
         gazebo_world,
+        spawn_entity,
+        diff_drive_spawner,
+        joint_broad_spawner,
         robot_localization_node,
         slam_toolbox_node
     ])
