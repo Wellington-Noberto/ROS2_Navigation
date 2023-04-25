@@ -17,6 +17,7 @@ def generate_launch_description():
     rviz_config_default_path = os.path.join(pkg_share, 'rviz/urdf_config.rviz')
     world_default_path = os.path.join(pkg_share, 'world/my_world.sdf')
     filter_config = os.path.join(pkg_share, 'config/ekf.yaml')
+    mapper_file = os.path.join(pkg_share, 'config/mapper.yaml')
 
     ## Launch configurations
     use_sim_time = LaunchConfiguration('use_sim_time')
@@ -98,19 +99,20 @@ def generate_launch_description():
         executable='async_slam_toolbox_node',
         name='slam_online_async_node',
         output='screen',
-        parameters=[{'use_sim_time': use_sim_time}]
+        parameters=[{ 'use_sim_time': use_sim_time}]
     )
 
     return LaunchDescription([
         model_desc_arg,
         use_sim_time_arg,
         rviz_arg,
+        
         robot_state_publisher_node,
         rviz_node,
         gazebo_world,
         spawn_entity,
         diff_drive_spawner,
         joint_broad_spawner,
-        robot_localization_node,
+        #robot_localization_node,
         slam_toolbox_node
     ])
