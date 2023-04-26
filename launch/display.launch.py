@@ -99,7 +99,13 @@ def generate_launch_description():
         executable='async_slam_toolbox_node',
         name='slam_online_async_node',
         output='screen',
-        parameters=[{ 'use_sim_time': use_sim_time}]
+        parameters=[{'use_sim_time': use_sim_time}]
+    )
+
+    navigation_node = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([os.path.join(
+            pkg_share, 'launch','navigation_launch.py')]),
+       # launch_arguments={'use_sim_time': 'true'}.items()
     )
 
     return LaunchDescription([
@@ -114,5 +120,6 @@ def generate_launch_description():
         diff_drive_spawner,
         joint_broad_spawner,
         #robot_localization_node,
-        slam_toolbox_node
+        slam_toolbox_node,
+        navigation_node
     ])
