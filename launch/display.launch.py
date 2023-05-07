@@ -66,6 +66,14 @@ def generate_launch_description():
         output='screen',
         parameters=[filter_config, {'use_sim_time': use_sim_time}]
     )
+
+    '''twist_mux = Node(
+            package="twist_mux",
+            executable="twist_mux",
+            parameters=[twist_mux_params, {'use_sim_time': True}],
+            remappings=[('/cmd_vel_out','/diff_cont/cmd_vel_unstamped')]
+        )
+    '''
     
     rviz_node = Node(
         package='rviz2',
@@ -99,13 +107,13 @@ def generate_launch_description():
         executable='async_slam_toolbox_node',
         name='slam_online_async_node',
         output='screen',
-        parameters=[{'use_sim_time': use_sim_time}]
+        parameters=[{'params_file': mapper_file,'use_sim_time': use_sim_time}]
     )
 
     navigation_node = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([os.path.join(
             pkg_share, 'launch','navigation_launch.py')]),
-       # launch_arguments={'use_sim_time': 'true'}.items()
+        launch_arguments={'use_sim_time': 'true'}.items()
     )
 
     return LaunchDescription([
@@ -119,7 +127,7 @@ def generate_launch_description():
         spawn_entity,
         diff_drive_spawner,
         joint_broad_spawner,
-        #robot_localization_node,
+        robot_localization_node,
         slam_toolbox_node,
         navigation_node
     ])
